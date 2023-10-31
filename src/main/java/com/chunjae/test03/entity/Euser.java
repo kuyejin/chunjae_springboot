@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class Euser {
+
     private Integer id;         //PK
     private String name;        //NOT NULL
     private String passwd ;     //NOT NULL
@@ -12,6 +13,6 @@ public class Euser {
     private String address;
     private String tel;
     private String regdate;    //DEFAULT CURRENT_TIME
-    private String lev;        //DEFAULT 'USER'
+    private String lev;        //DEFAULT 'user'
     private String act;        //DEFAULT 'JOIN'
 }

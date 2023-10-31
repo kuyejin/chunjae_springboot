@@ -2,13 +2,78 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.chunjae.test03.per.UserMapper">
-    <select id="userList" resultType="com.chunjae.test03.entity.UserInfo">
-        SELECT * FROM userinfo
+
+    <!-- 회원 전체 리스트 보기 -->
+    <select id="getUserList" resultType="com.chunjae.test03.entity.Euser">
+        SELECT * FROM euser order by id
     </select>
 
     <!-- 회원 상세 정보 보기 -->
-    <select id="getUser" resultType="com.chunjae.test03.entity.UserInfo">
-        select * from userinfo where id = #{id}
+    <select id="getUser" resultType="com.chunjae.test03.entity.Euser">
+        SELECT * FROM euser where name = #{name}
     </select>
+
+    <!-- 회원 탈퇴 act : WITHDRAW(탈퇴)  -->
+    <update id="getWithdraw">
+        update euser set act = 'WITHDRAW' where name = #{name }
+    </update>
+
+    <!-- 회원 활성화 act: JOIN(활동 중)  -->
+    <update id="getActivate">
+        update euser set act = 'JOIN' where name = #{name }
+    </update>
+
+    <!-- 회원 휴면 act: DORMANT(휴면 중)  -->
+    <update id="getDormant">
+        update euser set act = 'DORMANT' where name = #{name }
+    </update>
+
+    <!-- 회원 수정 -->
+    <update id="userUpdate">
+        update euser set pw=#{pw }, username=#{username }, email=#{email }, tel=#{tel }, address=#{address } where id = #{id }
+    </update>
+
+    <!--이메일 로그인-->
+    <select id="getByEmail" resultType="com.chunjae.test03.entity.Euser">
+        SELECT * FROM euser where email=#{email }
+    </select>
+
+    <!--아이디 로그인-->
+    <select id="getByName" resultType="com.chunjae.test03.entity.Euser">
+        SELECT * FROM euser where name = #{name }
+    </select>
+
+
+    <!-- 로그인 : DAO 에서 처리 -->
+    <select id="loginCheck" resultType="com.chunjae.test03.entity.Euser">
+        select email, passwd, username from euser where email = #{email}
+    </select>
+
+    <!-- 로그인 : ajax로 처리 -->
+    <select id="login" resultType="com.chunjae.test03.entity.Euser">
+        select email, passwd, username from euser where email = #{email}
+    </select>
+
+
+    <!--아이디 찾기-->
+    <select id="findById" resultType="com.chunjae.test03.entity.Euser">
+        SELECT * FROM euser where email=#{email } and tel = #{tel }
+    </select>
+
+    <!--비밀번호 찾기-->
+    <select id="findByPw" resultType="com.chunjae.test03.entity.Euser">
+        SELECT * FROM euser where email=#{email } and tel = #{tel } and name = #{name }
+    </select>
+
+    <!-- 회원 가입 -->
+    <insert id="userInsert">
+        insert into euser values(DEFAULT, #{name}, #{passwd}, #{username}, #{email}, #{address}, #{tel}, DEFAULT, DEFAULT, DEFAULT)
+    </insert>
+
+
+
+
+
+
 
 </mapper>
