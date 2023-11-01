@@ -68,6 +68,17 @@
         회원정보수정
     </button>
 
+   <%-- <button type="button" class="button is-info" onclick="location.href='${path}/user/removeUser.do?name=${user.name}' ">
+        회원 탈퇴
+    </button>
+--%>
+
+    <form id="delete_form" action="${path}/user/removeUser.do/${user.name}" method="post">
+        <input type="hidden" name="_method" value="delete"/>
+        <a onclick="if (confirm('정말로 삭제하시겠습니까?')) document.getElementById('delete_form').submit();" class="btn btn-danger">삭제</a>
+    </form>
+
+
 </div>
 
 </body>

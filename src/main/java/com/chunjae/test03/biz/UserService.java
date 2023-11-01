@@ -104,6 +104,14 @@ public class UserService {
     }
 
 
+    //계정 완전히 삭제
+    public int removeUser(String name) {
+        userMapper.userDelete(name);
+        int cnt = 0;
+        return cnt;
+    }
 
-
+    public int updateLevel(String name, String lev) {
+        return 0;
+    }
 }

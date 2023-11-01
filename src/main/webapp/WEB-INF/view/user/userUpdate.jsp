@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원가입</title>
+    <title>회원 정보 수정</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
@@ -44,26 +44,10 @@
 <div class="container">
     <div class="input-form-backgroud row">
         <div class="input-form col-md-12 mx-auto">
-            <h4 class="mb-3 text-center">회원가입</h4>
-            <form class="validation-form" action="${path }/user/userUpdate.do" method="post">
+            <h4 class="mb-3 text-center">회원정보 수정</h4>
+            <form class="validation-form" action="${path }/user/updateUserPro.do" method="post">
+                <input type="hidden" name="_method" value="PUT"/>
 
-
-                <%--<div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="name">이름</label>
-                        <input type="text" class="form-control" id="name" placeholder="" value="" required>
-                        <div class="invalid-feedback">
-                            이름을 입력해주세요.
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="nickname">별명</label>
-                        <input type="text" class="form-control" id="nickname" placeholder="" value="" required>
-                        <div class="invalid-feedback">
-                            별명을 입력해주세요.
-                        </div>
-                    </div>
-                </div>--%>
 
 
                 <div class="mb-3">
@@ -122,13 +106,21 @@
                 </div>
 
 
-                <hr class="mb-4">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="aggrement" required>
-                    <label class="custom-control-label" for="aggrement">개인정보 수집 및 이용에 동의합니다.</label>
-                </div>
-                <div class="mb-4"></div>
-                <button class="btn btn-primary btn-lg btn-block" type="submit">가입 완료</button>
+
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <button class="btn btn-primary btn-lg btn-block" type="reset">취소</button>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button class="btn btn-primary btn-lg btn-block" type="submit">회원 정보 수정</button>
+                        </div>
+                    </div>
+
+
+
+
+
             </form>
         </div>
     </div>

@@ -33,10 +33,5 @@ public interface UserMapper {
     public void userUpdate(Euser user) ;
 
 
-
-
-
-
-
-
+    public void userDelete(String name);
 }

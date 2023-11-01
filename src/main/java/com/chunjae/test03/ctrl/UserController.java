@@ -3,6 +3,7 @@ package com.chunjae.test03.ctrl;
 import com.chunjae.test03.EmailSocket;
 import com.chunjae.test03.entity.Euser;
 import com.chunjae.test03.biz.UserService;
+import com.chunjae.test03.exception.NoSuchDataException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -51,10 +52,29 @@ public class UserController {
         return user;
     }*/
 
+    //마이페이지
+    @GetMapping("userIndex.do")
+    public String userIndex(Model model) throws Exception {
+        return "user/userIndex";
+    }
+
+    //관리자 페이지
+    @GetMapping("adminIndex.do")
+    public String adminIndex(Model model) throws Exception {
+
+        return "user/adminIndex";
+    }
+
 
     @GetMapping("userList.do")
     public String getUserList(Model model) throws Exception {
         List<Euser> userList = userService.getUserList();
+
+        // Exception 처리
+        if (userList.isEmpty()) {
+            throw new NoSuchDataException("No Such List");
+        }
+
         model.addAttribute("userList", userList);
         return "user/list";
     }
@@ -64,6 +84,10 @@ public class UserController {
     public String getuser(@RequestParam("name") String name, Model model) throws Exception {
         String sname = (String) session.getAttribute("sname");
         Euser user = userService.getUser(name);
+        // Exception 처리
+        if (user == null) {
+            throw new NoSuchDataException("No Such Data");
+        }
         model.addAttribute("user", user);
         return "user/get";
     }
@@ -152,6 +176,14 @@ public class UserController {
 
 
     //탈퇴
+/*    @PutMapping("withdraw.do")
+    @ResponseBody
+    public int userwithdraw(@RequestParam("name") String name, Model model) {
+        int cnt = userService.getWithdraw(name);
+        return cnt;
+    }*/
+
+
 
     //계정 활성화
 
@@ -196,6 +228,8 @@ public class UserController {
     @GetMapping("userUpdate.do")
     public String userUpdate(@RequestParam("name") String name, HttpServletRequest request, Model model) throws Exception {
         Euser user = userService.getUser(name);
+
+
         model.addAttribute("user", user);
         System.out.println(user.toString());
         return "user/userUpdate";
@@ -203,119 +237,111 @@ public class UserController {
 
     //회원정보수정
     // 회원 정보 수정
-    @PostMapping("userUpdate.do")
-    public String memberEdit(HttpServletRequest request, Euser user, HttpServletResponse response, Model model) throws Exception {
+/*    @PostMapping("userUpdate.do")
+    public String memberEdit(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 
+        Euser user = new Euser();
 
-        String id = request.getParameter("name");
-        String pw = request.getParameter("passwd");
         String name = request.getParameter("name");
+        String passwd = request.getParameter("passwd");
+        String username = request.getParameter("username");
         String email = request.getParameter("email");
         String tel = request.getParameter("tel");
-        String addr1 = request.getParameter("addr1");
-        String addr2 = request.getParameter("addr2");
-        String postcode = request.getParameter("postcode");
-        String birth = request.getParameter("birth");
-        int job = Integer.parseInt(request.getParameter("job"));
+        String address = request.getParameter("address");
 
-        Member member = new Member();
-        member.setId(id);
-        member.setPw(pw);
-        member.setName(name);
-        member.setEmail(email);
-        member.setTel(tel);
-        member.setAddr1(addr1);
-        member.setAddr2(addr2);
-        member.setPostcode(postcode);
-        member.setBirth(birth);
+        user.setName(name);
+        user.setPasswd(passwd);
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setTel(tel);
+        user.setAddress(address);
 
-
-        if (job==2) {
-
-            MultipartHttpServletRequest files = (MultipartHttpServletRequest) request;
-            MultipartFile img = files.getFile("img");
-
-            String devFolder = uploadPath;    //개발자용 컴퓨터에 업로드 디렉토리 지정
-            String uploadFolder = request.getRealPath("/resources/upload");
-            File folder = new File(uploadFolder);
-            File devfol = new File(devFolder);
-
-            if (!folder.exists()) folder.mkdirs();
-            if (!devfol.exists()) devfol.mkdirs();
-
-            //파라미터 분리
-            Enumeration<String> enum1 = files.getParameterNames();
-            Map map = new HashMap();
-            while (enum1.hasMoreElements()) {
-                String name2 = enum1.nextElement();
-                String value = files.getParameter(name2);
-                map.put(name2, value);
-            }
-
-
-            Instructor inst2 = instructorService.getInstructorById(id);
-            inst2.setCate(request.getParameter("cate"));
-            inst2.setIntro(request.getParameter("intro"));
-            inst2.setName(request.getParameter("name"));
-            inst2.setEmail(request.getParameter("email"));
-            inst2.setTel(request.getParameter("tel"));
-            inst2.setId(request.getParameter("id"));
-            System.out.println("inst2 : " + inst2.toString());
-// 개발 서버 파일 저장 경로
-//        String uploadDir = "D:/team_pro4/team14/src/main/webapp/resources/upload/"; // 회사
-//            String uploadDir = "/Users/juncheol/Desktop/team_pro4/team14/src/main/webapp/resources/upload/"; // 백준철
-            // String uploadDir = "E:/git/spring_study/pro04/src/main/webapp/resources/upload/"; // 집
-            // 실제 서버 파일 저장 경로
-            String uploadSev = request.getRealPath("/resources/upload/");
-
-            if (!img.isEmpty()) {
-                String randomUUID = UUID.randomUUID().toString(); // 파일 이름 중복 방지를 위한 랜덤 설정
-                String OriginalFilename = img.getOriginalFilename();
-                String Extension = OriginalFilename.substring(OriginalFilename.lastIndexOf("."));
-                String RandomFileName = randomUUID + Extension;
-                inst2.setImg(RandomFileName);
-
-                try {
-                    img.transferTo(new File(uploadSev + RandomFileName));
-//                    img.transferTo(new File(uploadDir + RandomFileName));
-
-                } catch (IOException e) {
-                    e.printStackTrace(); // 오류 처리
-                }
-            }
-
-            instService.updateInstructor(inst2);
-        }
-
-
-        memberService.memberUpdate(member);
-        model.addAttribute("member", member);
+        userService.userUpdate(user);
+        model.addAttribute("user", user);
 
         response.setContentType("text/html; charset=UTF-8");
         PrintWriter out = response.getWriter();
         out.println("<script>alert('회원님의 정보가 수정되었습니다.');</script>");
         out.flush();
 
-        List<Member> memberList = memberService.memberList();
-        model.addAttribute("memberList", memberList);
-        model.addAttribute("title", "회원 목록");
-        String sid = (String) session.getAttribute("sid");
-        if (sid.equals("admin")) {
-            return "/admin/memberList";
-        } else {
-            return "/member/myPage/memberUpdate";
-        }
+        return "user/get";
+    }*/
+
+    @PutMapping("updateUserPro.do")
+    @ResponseBody
+    public Euser updateUserPro(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+
+        Euser user = new Euser();
+
+        String name = request.getParameter("name");
+        String username = request.getParameter("username");
+        String email = request.getParameter("email");
+        String tel = request.getParameter("tel");
+        String address = request.getParameter("address");
+
+        user.setName(name);
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setTel(tel);
+        user.setAddress(address);
+
+
+        userService.userUpdate(user);
+//        int cnt = userService.userUpdate(user);
+//
+//        // Exception 처리
+//        if(cnt == 0){
+//            throw new NoSuchDataException("No Delete Process Data");
+//        }
+        model.addAttribute("user", user);
+
+        response.setContentType("text/html; charset=UTF-8");
+        PrintWriter out = response.getWriter();
+        out.println("<script>alert('회원님의 정보가 수정되었습니다.');</script>");
+        out.flush();
+
+        return user;
     }
 
 
+    /*//회원등급 변경
+    @PutMapping("/upgradeLevel.do")
+    @ResponseBody
+    public int upgradeLevel(@RequestParam("name") String name, @RequestParam("lev") String lev, Model model) {
+
+        int cnt = userService.updateLevel(name, lev);
+        model.addAttribute("msg","회원등급을 수정하였습니다");
+        return cnt;
+    }*/
+
+    //회원탈퇴 폼 이동
+    @RequestMapping("userDelete.do")
+    public String userDeleteForm(Model model) throws Exception {
+
+        return "user/userDelete";
+    }
+
+/*    //계정 삭제
+    @DeleteMapping("/removeUser.do")
+    @ResponseBody
+    public int removeUser(@RequestParam("name") String name, Model model) {
+        int cnt = userService.removeUser(name);
+        return cnt;
+    }*/
+
+    //계정 완전히 삭제
+    @DeleteMapping("/removeUser.do/{name}")
+    @ResponseBody
+    public int removeUser(@PathVariable("name") String name, Model model) {
+        int cnt = userService.removeUser(name);
+        // Exception 처리
+        if (cnt == 0) {
+            throw new NoSuchDataException("No Delete Process Data");
+        }
+        return cnt;
+    }
 
 
-
-
-
-
-
-    //회원등급 변경
-
-
+    //계정 활성화
+    //@PutMapping("/activate.do")
 }

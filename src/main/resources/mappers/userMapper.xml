@@ -30,8 +30,14 @@
 
     <!-- 회원 수정 -->
     <update id="userUpdate">
-        update euser set pw=#{pw }, username=#{username }, email=#{email }, tel=#{tel }, address=#{address } where id = #{id }
+        update euser set username=#{username }, email=#{email }, tel=#{tel }, address=#{address } where  name = #{name }
     </update>
+
+    <!--회원 완전히 삭제-->
+    <delete id="userDelete">
+        delete from euser where name = #{name}
+    </delete>
+
 
     <!--이메일 로그인-->
     <select id="getByEmail" resultType="com.chunjae.test03.entity.Euser">
@@ -69,6 +75,12 @@
     <insert id="userInsert">
         insert into euser values(DEFAULT, #{name}, #{passwd}, #{username}, #{email}, #{address}, #{tel}, DEFAULT, DEFAULT, DEFAULT)
     </insert>
+
+
+
+
+
+
 
 
 
